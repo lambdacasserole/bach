@@ -14,6 +14,30 @@ Bach is written in Java, and makes use of Swing. Batteries are definitely not in
 ## Use Case
 The library is designed to be very general-purpose. If you need a starting point for simply modelling the relationships between objects, with some constraints, Bach might be for you.
 
+## Installation
+You can pull this package into your Maven project straight from here using JitPack. Add JitPack as a repository first:
+
+```
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
+
+Then add a dependency on Bach:
+
+```
+<dependencies>
+    <dependency>
+        <groupId>com.github.lambdacasserole</groupId>
+        <artifactId>bach</artifactId>
+        <version>v1.0</version>
+    </dependency>
+</dependencies>
+```
+
 ## Quickstart
 See below for some code that'll get you started quite quickly. Remember you have to define `MyCustomBrick1` and `MyCustomBrick2` yourself by subclassing `Brick`.
 
