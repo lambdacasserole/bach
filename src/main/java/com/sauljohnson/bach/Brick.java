@@ -119,11 +119,11 @@ public abstract class Brick<T> {
     public abstract JPopupMenu getContextMenu();
 
     /**
-     * Gets the list of supported connection types for the brick.
+     * Gets the list of connection capacities for the brick.
      *
-     * @return  the list of supported connection types for the brick
+     * @return  the list of supported connection capacities for the brick
      */
-    public abstract List<Class> getSupportedConnectionTypes();
+    public abstract List<ConnectionCapacity> getConnectionCapacities();
 
     /**
      * Gets the list of bricks this brick is connected to.
@@ -135,16 +135,68 @@ public abstract class Brick<T> {
     }
 
     /**
+     * Returns true if this brick can connect to the type of the one given, otherwise returns false.
+     *
+     * @param brick the brick to check
+     * @return      true if this brick can connect to the type of the one given, otherwise false
+     */
+    public boolean supportsConnection(Brick brick) {
+        for (ConnectionCapacity capacity : getConnectionCapacities()) {
+            if (capacity.getType() == brick.getClass()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Counts connections having the same type as the given brick.
+     * @param brick the brick for which to count connections of the same type
+     * @return      the number of connections having the same type as the given brick
+     */
+    public int countConnectionsOfType(Brick brick) {
+        int count = 0;
+        for (Brick connection : connections) {
+            if (connection.getClass() == brick.getClass()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Gets the maximum connection capacity for connections of the same type as the given brick.
+     * @param brick the brick for which to get the maximum capacity for connections of the same type
+     * @return      the maximum connection capacity for connections of the same type as the given brick
+     */
+    public int getMaximumConnectionCapacity(Brick brick) {
+        for (ConnectionCapacity capacity : getConnectionCapacities()) {
+            if (capacity.getType() == brick.getClass()) {
+                return capacity.getCount();
+            }
+        }
+        return 0;
+    }
+
+    /**
      * Returns true if this brick can connect to the one given, otherwise returns false.
      *
      * @param brick the brick to check
      * @return      true if this brick can connect to the one given, otherwise false
      */
-    public boolean supportsConnection(Brick brick) {
-        return getSupportedConnectionTypes().contains(brick.getClass())
-                && brick.getSupportedConnectionTypes().contains(getClass());
+    public boolean canConnect(Brick brick) {
+
+        // Bidirectional support and bidirectional capacity required.
+        return supportsConnection(brick) && brick.supportsConnection(this)
+                && countConnectionsOfType(brick) < getMaximumConnectionCapacity(brick)
+                && brick.countConnectionsOfType(this) < brick.getMaximumConnectionCapacity(this);
     }
 
+    /**
+     * Adds a connection to the brick without checking its validity.
+     *
+     * @param brick the brick to add a connection to
+     */
     private void addConnectionUnchecked(Brick brick) {
         connections.add(brick);
     }
@@ -155,7 +207,7 @@ public abstract class Brick<T> {
      * @param brick the brick to add a connection to
      */
     public void addConnection(Brick brick) {
-        if (supportsConnection(brick) && brick.supportsConnection(this)) {
+        if (canConnect(brick) && brick.canConnect(this)) {
             if (hasConnection(brick)) {
                 throw new IllegalArgumentException("You may not add multiple links between the same bricks.");
             } else {

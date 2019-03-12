@@ -4,15 +4,25 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
+/**
+ * Represents a state in which neither a linking or dragging operation is taking place in a {@link Designer}.
+ *
+ * @author  Saul Johnson, Alex Mullen, Lee Oliver
+ */
 public class DefaultState extends DesignerState {
 
+    /**
+     * Initialises a new instance of  a state in which neither a linking or dragging operation is taking place in a
+     * designer.
+     *
+     * @param designer  the designer this state relates to
+     */
     public DefaultState(Designer designer){
         super(designer);
     }
 
     @Override
     protected void handleMousePressed(MouseEvent e) {
-        System.out.println("Mouse pressed in default state.");
 
         // Linking tag left-clicked, enter linking mode.
         if (SwingUtilities.isLeftMouseButton(e) && designer.isInLinkingTagBounds(e.getPoint())) {

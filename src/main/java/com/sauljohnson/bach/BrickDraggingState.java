@@ -38,7 +38,7 @@ public class BrickDraggingState extends BrickSelectedDesignerState {
 
         // Raise events with observers.
         for (DesignerEventListener currentListener : designer.getDesignerEventListeners()) {
-            currentListener.agentMoved(getSelectedBrick());
+            currentListener.brickMoved(getSelectedBrick());
         }
     }
 

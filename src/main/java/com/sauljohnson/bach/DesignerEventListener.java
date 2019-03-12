@@ -1,59 +1,57 @@
 package com.sauljohnson.bach;
 
 /**
- * A specialised event listener designed to listen for events raised by a NetworkDesigner control.
+ * A specialised event listener designed to listen for events raised by a {@link Designer} control.
  * 
  * @author  Saul Johnson, Alex Mullen, Lee Oliver
  */
 public interface DesignerEventListener {
 
     /**
-     * Raised when an agent is added into the designer.
+     * Raised when an brick is added into the designer.
      * 
-     * @param agent The agent that was added.
+     * @param brick The brick that was added.
      */
-    public void agentAdded(Brick agent);
+    public void brickAdded(Brick brick);
     
     /**
-     * Raised when an agent is deleted from the designer.
+     * Raised when an brick is deleted from the designer.
      * 
-     * @param agent The agent that was deleted.
+     * @param brick The brick that was deleted.
      */
-    public void agentDeleted(Brick agent);
+    public void brickDeleted(Brick brick);
     
     /**
-     * Raised when an agent is selected in the designer.
+     * Raised when an brick is selected in the designer.
      * 
-     * @param agent The agent that was selected.
+     * @param brick The brick that was selected.
      */
-    public void brickSelected(Brick agent);
+    public void brickSelected(Brick brick);
     
     /**
-     * Raised when an agent has been repositioned in the designer.
+     * Raised when an brick has been repositioned in the designer.
      * 
-     * @param agent The agent that has been repositioned/moved.
+     * @param brick The brick that has been repositioned/moved.
      */
-    public void agentMoved(Brick agent);
+    public void brickMoved(Brick brick);
 
     /**
-     * Raised when a previously selected agent is now not selected and nothing
-     * else is currently selected.
-     * 
+     * Raised when a previously selected brick is now not selected and nothing else is currently selected.
      */
     public void selectionCleared();
     
     /**
-     * Raised when an agent is linked with another agent in the designer.
+     * Raised when an brick is linked with another brick in the designer.
      * 
-     * @param link The link that was created.
+     * @param brick The link that was created.
      */
-    public void linkCreated(Brick link);
+    public void linkCreated(Brick brick);
     
     /**
-     * Raised when an agent link is broken then deleted in the designer.
+     * Raised when an brick link is broken then deleted in the designer.
      * 
-     * @param link The link that is and has been deleted.
+     * @param brick The link that is and has been deleted.
      */
-    public void linkDeleted(Brick link);
+    public void linkDeleted(Brick brick);
     
 }

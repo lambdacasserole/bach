@@ -4,6 +4,8 @@ import java.awt.event.MouseEvent;
 
 /**
  * A class that represents a state that a Designer object can be in.
+ *
+ * @author  Saul Johnson, Alex Mullen, Lee Oliver
  */
 public abstract class DesignerState {
 

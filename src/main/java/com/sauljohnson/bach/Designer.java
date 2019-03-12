@@ -16,7 +16,7 @@ import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 
 /**
- * A Multi-Agent-System network designer for Denobo.
+ * A generic drag-and-drop designer.
  *
  * @author  Saul Johnson, Alex Mullen, Lee Oliver
  */
@@ -30,21 +30,21 @@ public class Designer extends JComponent {
     /**
      * The colour of each grid line.
      */
-    private final Color gridLineColor = new Color(0, 0, 0, 25);   
-    
-    
-    // Selection line constants.
-    
+    private Color gridLineColor = new Color(0, 0, 0, 25);
+
     /**
      * The colour of the selection box that appears around a selected agent.
      */
     private final Color selectionBoundingBoxColor = new Color(0, 0, 0, 100);
 
+    /**
+     * The bounding box of the linking tag attached to the selected control.
+     */
+    private Rectangle linkingTagBounds;
+
     public Rectangle getLinkingTagBounds() {
         return linkingTagBounds;
     }
-
-    private Rectangle linkingTagBounds;
 
     public boolean isInLinkingTagBounds(Point p) {
         return linkingTagBounds != null && linkingTagBounds.contains(p);
@@ -307,7 +307,7 @@ public class Designer extends JComponent {
         this.repaint();
         
         for (DesignerEventListener currentListener : designerEventListeners) {
-            currentListener.agentDeleted(agent);
+            currentListener.brickDeleted(agent);
         }
         
     }

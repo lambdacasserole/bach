@@ -7,6 +7,11 @@ package com.sauljohnson.bach;
  */
 public abstract class BrickSelectedDesignerState extends DesignerState {
 
+    /**
+     * Initialises a new instance of an abstract state in which a brick is selected in a designer.
+     *
+     * @param designer  the designer this state relates to
+     */
     protected BrickSelectedDesignerState(Designer designer) {
         super(designer);
     }

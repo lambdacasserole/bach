@@ -25,16 +25,20 @@ public class BrickLinkingState extends BrickSelectedDesignerState {
 
     @Override
     protected void handleMousePressed(MouseEvent e) {
-        System.out.println("Linking event triggered made.");
 
+        // If brick was clicked.
         final Brick brickClicked = designer.getBrickAt(e.getPoint());
         if (brickClicked != null) {
-            if (getSelectedBrick().supportsConnection(brickClicked)
+
+            // Make link if supported and does not exist already.
+            if (getSelectedBrick().canConnect(brickClicked)
                     && !getSelectedBrick().hasConnection(brickClicked)) {
                 getSelectedBrick().addConnection(brickClicked);
             }
             designer.selectBrick(brickClicked);
         }
+
+        // Revert state to default (i.e. leave linking state).
         designer.setState(new DefaultState(designer));
     }
 }
