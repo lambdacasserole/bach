@@ -7,7 +7,7 @@ import java.awt.event.MouseEvent;
 /**
  * A class that represents a state where an agent has been selected.
  */
-public class BrickSelectedState extends DesignerState {
+public class BrickSelectedState extends BrickSelectedDesignerState {
 
     public BrickSelectedState(Designer designer){
         super(designer);
@@ -15,16 +15,17 @@ public class BrickSelectedState extends DesignerState {
 
     @Override
     protected void handleMouseClicked(MouseEvent e) {
-        final Brick agentClicked = designer.getBrickAt(e.getPoint());
         if (SwingUtilities.isLeftMouseButton(e)) {
-            if (agentClicked != null) {
-                designer.selectAgent(agentClicked);
+            if (designer.getLinkBoxBounds().contains(e.getPoint())) {
+                designer.setSelectedAgentTryingToLink(true);
+                designer.setState(new BrickLinkingState(designer));
+                designer.repaint();
             } else {
                 designer.clearSelection();
             }
         } else if (SwingUtilities.isRightMouseButton(e)) {
-            if (agentClicked != null) {
-                designer.selectAgent(agentClicked);
+            if (getSelectedBrick() != null) {
+                designer.selectAgent(getSelectedBrick());
                 designer.setLastMenuClickPosition(e.getPoint());
             } else {
                 designer.clearSelection();
@@ -37,11 +38,10 @@ public class BrickSelectedState extends DesignerState {
     @Override
     protected void handleMousePressed(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
-            final Brick agentClicked = designer.getBrickAt(e.getPoint());
-            if (agentClicked != null) {
-                designer.setAgentSelected(agentClicked);
+            if (getSelectedBrick() != null) {
+                designer.setSelectedBrick(getSelectedBrick());
                 designer.setState(new BrickDraggingState(designer));
-                designer.setSelectedComponentDragOffset(new Point(e.getX() - agentClicked.getX(), e.getY() - agentClicked.getY()));
+                designer.setSelectedComponentDragOffset(new Point(e.getX() - getSelectedBrick().getX(), e.getY() - getSelectedBrick().getY()));
                 designer.repaint();
             }
         }

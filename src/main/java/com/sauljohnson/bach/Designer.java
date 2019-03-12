@@ -21,17 +21,11 @@ import javax.swing.JPopupMenu;
  * @author  Saul Johnson, Alex Mullen, Lee Oliver
  */
 public class Designer extends JComponent {
-    
-    // Grid line constants.
-
-    public int getGridSpacing() {
-        return gridSpacing;
-    }
 
     /**
      * The number of pixels each grid line is separated by.
      */
-    private final int gridSpacing = 15;
+    private int gridSpacing = 15;
     
     /**
      * The colour of each grid line.
@@ -45,7 +39,13 @@ public class Designer extends JComponent {
      * The colour of the selection box that appears around a selected agent.
      */
     private final Color selectionBoundingBoxColor = new Color(0, 0, 0, 100);
-    
+
+    public Rectangle getLinkBoxBounds() {
+        return linkBoxBounds;
+    }
+
+    private Rectangle linkBoxBounds;
+
     /**
      * The dash to use for creating a dash effect for the selection box border.
      */
@@ -128,18 +128,18 @@ public class Designer extends JComponent {
      */
     private DesignerState state;
 
-    public Brick getAgentSelected() {
-        return agentSelected;
+    public Brick getSelectedBrick() {
+        return selectedBrick;
     }
 
-    public void setAgentSelected(Brick agentSelected) {
-        this.agentSelected = agentSelected;
+    public void setSelectedBrick(Brick selectedBrick) {
+        this.selectedBrick = selectedBrick;
     }
 
     /**
      * The current agent that is selected or null if none are selected.
      */
-    private Brick agentSelected;
+    private Brick selectedBrick;
 
     public boolean isSelectedAgentTryingToLink() {
         return isSelectedAgentTryingToLink;
@@ -155,10 +155,6 @@ public class Designer extends JComponent {
      */
     private boolean isSelectedAgentTryingToLink;
 
-    public boolean isShowGrid() {
-        return showGrid;
-    }
-
     /**
      * Whether or not the grid (and snap-to-grid features) are currently enabled.
      */
@@ -166,10 +162,8 @@ public class Designer extends JComponent {
 
 
     /**
-     * Creates a new Designer instance for designing and configuring a 
-     * network of agents.
+     * Creates a new Designer instance for designing and configuring a network of agents.
      */
-    @SuppressWarnings("LeakingThisInConstructor")
     public Designer(JPopupMenu emptySpacePopup) {
 
         super();
@@ -228,23 +222,33 @@ public class Designer extends JComponent {
     }
 
     /**
+     * Gets whether or not the grid (and snap-to-grid features) are currently enabled in the designer.
+     *
+     * @return true if the grid is set to showDialog otherwise false.
+     */
+    public boolean isShowGrid() {
+        return showGrid;
+    }
+
+    /**
      * Sets whether or not the grid (and snap-to-grid features) are currently enabled in the designer.
      *
      * @param showGrid Whether or not to showDialog the grid and enable snap-to-grid features.
      */
     public void setShowGrid(boolean showGrid) {
         this.showGrid = showGrid;
+        this.repaint();
     }
-    
-    /**
-     * Gets whether or not the grid (and snap-to-grid features) are currently enabled in the designer.
-     * 
-     * @return true if the grid is set to showDialog otherwise false.
-     */
-    public boolean getShowGrid() {
-        return showGrid;
+
+    public int getGridSpacing() {
+        return gridSpacing;
     }
-    
+
+    public void setGridSpacing(int gridSpacing) {
+        this.gridSpacing = gridSpacing;
+        this.repaint();
+    }
+
     /**
      * Adds a listener class to the designer, which receives all design events triggered by the user.
      *
@@ -297,7 +301,7 @@ public class Designer extends JComponent {
         agent.removeAllConnections();
         agents.remove(agent);
         
-        if (agentSelected == agent) {
+        if (selectedBrick == agent) {
             clearSelection();
         }
         
@@ -314,8 +318,8 @@ public class Designer extends JComponent {
      */
     public void removeSelectedAgent() {
         
-        if (agentSelected != null) {
-            removeAgent(agentSelected);
+        if (selectedBrick != null) {
+            removeAgent(selectedBrick);
         }
         
     }
@@ -327,7 +331,7 @@ public class Designer extends JComponent {
      */
     public void selectAgent(Brick agent) {
         
-        agentSelected = agent;
+        selectedBrick = agent;
         state = new BrickSelectedState(this);
         this.repaint();
         
@@ -342,7 +346,7 @@ public class Designer extends JComponent {
      */
     public void clearSelection() {
 
-        agentSelected = null;
+        selectedBrick = null;
         state = new DefaultState(this);
         this.repaint();
         
@@ -379,8 +383,8 @@ public class Designer extends JComponent {
 
         if (isSelectedAgentTryingToLink) {    // Are we dragging a link around?
             
-            final int x = agentSelected.getBounds().x + (agentSelected.getBounds().width / 2);
-            final int y = agentSelected.getBounds().y + (agentSelected.getBounds().height / 2);
+            final int x = selectedBrick.getBounds().x + (selectedBrick.getBounds().width / 2);
+            final int y = selectedBrick.getBounds().y + (selectedBrick.getBounds().height / 2);
             
             g.setColor(Color.black);
             g.drawLine(x, y, this.getMousePosition().x, this.getMousePosition().y);
@@ -404,16 +408,17 @@ Brick gg = (Brick) otherAgent;
             g.drawImage(currentAgent.getImage(), currentAgent.getX(), currentAgent.getY(), null);
         }
         
-        if (agentSelected != null) { 
+        if (selectedBrick != null) {
             
-//            agentSelected.draw(g);
+//            selectedBrick.draw(g);
             
             // Dotted bounding box on selected agent.
-            final Rectangle agentBounds = agentSelected.getBounds();
+            final Rectangle agentBounds = selectedBrick.getBounds();
             g.setColor(Color.WHITE);
-            g.fillRect((int) agentBounds.getX() - 10, (int) agentBounds.getY() - 10, 10, 10);
+            linkBoxBounds = new Rectangle((int) agentBounds.getX() - 10, (int) agentBounds.getY() - 10, 10, 10);
+            g.fillRect(linkBoxBounds.x, linkBoxBounds.y, linkBoxBounds.width, linkBoxBounds.height);
             g.setColor(Color.BLACK);
-            g.drawRect((int) agentBounds.getX() - 10, (int) agentBounds.getY() - 10, 10, 10);
+            g.drawRect(linkBoxBounds.x, linkBoxBounds.y, linkBoxBounds.width, linkBoxBounds.height);
             g.setColor(selectionBoundingBoxColor);
             g.setStroke(selectionBoundingBoxStroke);
             g.draw(agentBounds);

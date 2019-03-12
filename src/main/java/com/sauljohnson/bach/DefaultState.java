@@ -32,9 +32,9 @@ public class DefaultState extends DesignerState {
         if (SwingUtilities.isLeftMouseButton(e)) {
             final Brick agentClicked = designer.getBrickAt(e.getPoint());
             if (agentClicked != null) {
-                designer.setAgentSelected(agentClicked);
+                designer.setSelectedBrick(agentClicked);
                 designer.setState(new BrickDraggingState(designer));
-                designer.setSelectedComponentDragOffset(new Point(e.getX() - designer.getAgentSelected().getX(), e.getY() - designer.getAgentSelected().getY()));
+                designer.setSelectedComponentDragOffset(new Point(e.getX() - designer.getSelectedBrick().getX(), e.getY() - designer.getSelectedBrick().getY()));
                 designer.repaint();
             }
         }

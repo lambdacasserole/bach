@@ -4,11 +4,17 @@ import javax.swing.*;
 import java.awt.event.MouseEvent;
 
 /**
- * A class that represents a state where there is a link attached to the
- * selected agent with the other end attached to the mouse cursor position.
+ * Represents a state in which a {@link Brick} is currently being linked to another in a {@link Designer}.
+ *
+ * @author  Saul Johnson, Alex Mullen, Lee Oliver
  */
-public class BrickLinkingState extends DesignerState {
+public class BrickLinkingState extends BrickSelectedDesignerState {
 
+    /**
+     * Initialises a new instance of a state in which a brick is currently being linked to another in a designer.
+     *
+     * @param designer  the designer this state relates to
+     */
     public BrickLinkingState(Designer designer){
         super(designer);
     }
@@ -16,10 +22,9 @@ public class BrickLinkingState extends DesignerState {
     @Override
     protected void handleMouseClicked(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
-            final Brick agentClicked = designer.getBrickAt(e.getPoint());
-            if (agentClicked != null) {
+            if (getSelectedBrick() != null) {
                 designer.setSelectedAgentTryingToLink(false);
-                designer.selectAgent(agentClicked);
+                designer.selectAgent(getSelectedBrick());
             } else {
                 designer.setSelectedAgentTryingToLink(false);
                 designer.clearSelection();

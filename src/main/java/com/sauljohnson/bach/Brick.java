@@ -7,10 +7,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Represents a brick that can be displayed and moved in a designer.
+ * Represents a brick that can be displayed and moved in a {@link Designer}.
  * 
  * @author  Saul Johnson, Alex Mullen, Lee Oliver
- * @see     Designer
  */
 public abstract class Brick<T> {
 
@@ -35,9 +34,11 @@ public abstract class Brick<T> {
     private List<Brick> connections;
 
     /**
-     * Initialises a new instance of a brick.
+     * Initialises a new instance of a brick that can be displayed and moved in a {@link Designer}.
      * 
      * @param modelObject   the underlying instance
+     * @param x             the initial x-coordinate in pixels
+     * @param y             the initial y-coordinate in pixels
      */
     public Brick(T modelObject, int x, int y) {
         this.modelObject = modelObject;
