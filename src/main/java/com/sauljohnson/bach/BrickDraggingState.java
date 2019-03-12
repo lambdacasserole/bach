@@ -20,11 +20,12 @@ public class BrickDraggingState extends BrickSelectedDesignerState {
 
     @Override
     protected void handleMouseDragged(MouseEvent e) {
-        // Compute new location.
-        int newX = (e.getX() - designer.getSelectedComponentDragOffset().x);
-        int newY = (e.getY() - designer.getSelectedComponentDragOffset().y);
 
-        // Snap to grid.
+        // Compute new location.
+        int newX = e.getX() - designer.getSelectedComponentDragOffset().x;
+        int newY = e.getY() - designer.getSelectedComponentDragOffset().y;
+
+        // Snap to grid?
         if (designer.isShowGrid()) {
             newX = newX - (newX % designer.getGridSpacing());
             newY = newY - (newY % designer.getGridSpacing());
@@ -43,7 +44,8 @@ public class BrickDraggingState extends BrickSelectedDesignerState {
 
     @Override
     protected void handleMouseReleased(MouseEvent e) {
+
         // Brick released, revert state.
-        designer.setState(new BrickSelectedState(designer));
+        designer.setState(new DefaultState(designer));
     }
 }

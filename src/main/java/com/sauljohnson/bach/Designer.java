@@ -40,11 +40,15 @@ public class Designer extends JComponent {
      */
     private final Color selectionBoundingBoxColor = new Color(0, 0, 0, 100);
 
-    public Rectangle getLinkBoxBounds() {
-        return linkBoxBounds;
+    public Rectangle getLinkingTagBounds() {
+        return linkingTagBounds;
     }
 
-    private Rectangle linkBoxBounds;
+    private Rectangle linkingTagBounds;
+
+    public boolean isInLinkingTagBounds(Point p) {
+        return linkingTagBounds != null && linkingTagBounds.contains(p);
+    }
 
     /**
      * The dash to use for creating a dash effect for the selection box border.
@@ -121,6 +125,7 @@ public class Designer extends JComponent {
 
     public void setState(DesignerState state) {
         this.state = state;
+        repaint();
     }
 
     /**
@@ -142,18 +147,12 @@ public class Designer extends JComponent {
     private Brick selectedBrick;
 
     public boolean isSelectedAgentTryingToLink() {
-        return isSelectedAgentTryingToLink;
+        return state instanceof BrickLinkingState;
     }
 
-    public void setSelectedAgentTryingToLink(boolean selectedAgentTryingToLink) {
-        isSelectedAgentTryingToLink = selectedAgentTryingToLink;
+    public boolean hasEmptySpacePopup() {
+        return emptySpacePopup != null;
     }
-
-    /**
-     * Holds whether the selected agent is currently in "link" mode where a link
-     * is being dragged from it.
-     */
-    private boolean isSelectedAgentTryingToLink;
 
     /**
      * Whether or not the grid (and snap-to-grid features) are currently enabled.
@@ -325,35 +324,29 @@ public class Designer extends JComponent {
     }
     
     /**
-     * Set's the specified agent as the one selected.
+     * Sets the specified brick as the one selected.
      * 
-     * @param agent The agent to set as the selected agent.
+     * @param brick The brick to set as the selected brick.
      */
-    public void selectAgent(Brick agent) {
-        
-        selectedBrick = agent;
-        state = new BrickSelectedState(this);
+    public void selectBrick(Brick brick) {
+        selectedBrick = brick;
         this.repaint();
         
         for (DesignerEventListener currentListener : designerEventListeners) {
-            currentListener.agentSelected(agent);
+            currentListener.brickSelected(brick);
         }
-        
     }
-    
+
     /** 
      * Clears the current selected agent so that nothing is selected.
      */
     public void clearSelection() {
-
         selectedBrick = null;
-        state = new DefaultState(this);
         this.repaint();
         
         for (DesignerEventListener currentListener : designerEventListeners) {
             currentListener.selectionCleared();
         }
-        
     }
 
     /**
@@ -381,7 +374,7 @@ public class Designer extends JComponent {
             
         }
 
-        if (isSelectedAgentTryingToLink) {    // Are we dragging a link around?
+        if (isSelectedAgentTryingToLink()) {    // Are we dragging a link around?
             
             final int x = selectedBrick.getBounds().x + (selectedBrick.getBounds().width / 2);
             final int y = selectedBrick.getBounds().y + (selectedBrick.getBounds().height / 2);
@@ -415,10 +408,10 @@ Brick gg = (Brick) otherAgent;
             // Dotted bounding box on selected agent.
             final Rectangle agentBounds = selectedBrick.getBounds();
             g.setColor(Color.WHITE);
-            linkBoxBounds = new Rectangle((int) agentBounds.getX() - 10, (int) agentBounds.getY() - 10, 10, 10);
-            g.fillRect(linkBoxBounds.x, linkBoxBounds.y, linkBoxBounds.width, linkBoxBounds.height);
+            linkingTagBounds = new Rectangle((int) agentBounds.getX() - 10, (int) agentBounds.getY() - 10, 10, 10);
+            g.fillRect(linkingTagBounds.x, linkingTagBounds.y, linkingTagBounds.width, linkingTagBounds.height);
             g.setColor(Color.BLACK);
-            g.drawRect(linkBoxBounds.x, linkBoxBounds.y, linkBoxBounds.width, linkBoxBounds.height);
+            g.drawRect(linkingTagBounds.x, linkingTagBounds.y, linkingTagBounds.width, linkingTagBounds.height);
             g.setColor(selectionBoundingBoxColor);
             g.setStroke(selectionBoundingBoxStroke);
             g.draw(agentBounds);

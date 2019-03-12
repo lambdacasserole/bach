@@ -4,10 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-/**
- * A class that represents the default state where nothing is really currently
- * happening. (Nothing selected, nothing getting dragged or nothing linking)
- */
 public class DefaultState extends DesignerState {
 
     public DefaultState(Designer designer){
@@ -15,39 +11,36 @@ public class DefaultState extends DesignerState {
     }
 
     @Override
-    protected void handleMouseClicked(MouseEvent e) {
-        if (SwingUtilities.isLeftMouseButton(e)) {
-            final Brick agentClicked = designer.getBrickAt(e.getPoint());
-            if (agentClicked != null) {
-                designer.selectAgent(agentClicked);
-            }
-        } else if (SwingUtilities.isRightMouseButton(e)) {
-            designer.setLastMenuClickPosition(e.getPoint());
-            designer.getEmptySpacePopup().show(e.getComponent(), e.getX(), e.getY());
-        }
-    }
-
-    @Override
     protected void handleMousePressed(MouseEvent e) {
-        if (SwingUtilities.isLeftMouseButton(e)) {
-            final Brick agentClicked = designer.getBrickAt(e.getPoint());
-            if (agentClicked != null) {
-                designer.setSelectedBrick(agentClicked);
-                designer.setState(new BrickDraggingState(designer));
-                designer.setSelectedComponentDragOffset(new Point(e.getX() - designer.getSelectedBrick().getX(), e.getY() - designer.getSelectedBrick().getY()));
-                designer.repaint();
-            }
-        }
-    }
+        System.out.println("Mouse pressed in default state.");
 
-    @Override
-    protected void handleMouseReleased(MouseEvent e) {
-        if (SwingUtilities.isRightMouseButton(e)) {
-            final Brick agentClicked = designer.getBrickAt(e.getPoint());
-            if (agentClicked != null) {
-                designer.selectAgent(agentClicked);
+        // Linking tag left-clicked, enter linking mode.
+        if (SwingUtilities.isLeftMouseButton(e) && designer.isInLinkingTagBounds(e.getPoint())) {
+            designer.setState(new BrickLinkingState(designer));
+            return;
+        }
+
+        final Brick brickClicked = designer.getBrickAt(e.getPoint());
+        if (brickClicked != null) {
+            designer.selectBrick(brickClicked); // Brick clicked, select it.
+            designer.setSelectedComponentDragOffset(new Point(e.getX() - brickClicked.getX(),
+                    e.getY() - brickClicked.getY()));
+
+            // Which mouse button?
+            if (SwingUtilities.isLeftMouseButton(e)) {
+
+                // Left-click enters dragging mode.
+                designer.setState(new BrickDraggingState(designer));
+            } else if (SwingUtilities.isRightMouseButton(e) && brickClicked.hasContextMenu()) {
+
+                // Brick right-clicked, show its context menu.
                 designer.setLastMenuClickPosition(e.getPoint());
-            } else {
+                brickClicked.getContextMenu().show(e.getComponent(), e.getX(), e.getY());
+            }
+        } else {
+
+            // Empty space right-clicked, show context menu for designer.
+            if (SwingUtilities.isRightMouseButton(e) && designer.hasEmptySpacePopup()) {
                 designer.setLastMenuClickPosition(e.getPoint());
                 designer.getEmptySpacePopup().show(e.getComponent(), e.getX(), e.getY());
             }

@@ -58,6 +58,8 @@ public class RawDataConnectionBrick extends Brick<Object> {
 
     @Override
     public List<Class> getSupportedConnectionTypes() {
-        return new ArrayList<>();
+        ArrayList<Class> ss = new ArrayList<>();
+        ss.add(RawDataConnectionBrick.class);
+        return ss;
     }
 }

@@ -10,6 +10,8 @@ public class QuickTest {
         gg.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gg.show();
         RawDataConnectionBrick dd = new RawDataConnectionBrick(null,0, 0);
+        RawDataConnectionBrick d1 = new RawDataConnectionBrick(null,0, 0);
         d.addBrick(dd);
+        d.addBrick(d1);
     }
 }

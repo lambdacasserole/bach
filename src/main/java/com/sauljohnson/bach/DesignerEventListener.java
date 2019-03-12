@@ -26,7 +26,7 @@ public interface DesignerEventListener {
      * 
      * @param agent The agent that was selected.
      */
-    public void agentSelected(Brick agent);
+    public void brickSelected(Brick agent);
     
     /**
      * Raised when an agent has been repositioned in the designer.

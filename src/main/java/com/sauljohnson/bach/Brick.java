@@ -140,9 +140,13 @@ public abstract class Brick<T> {
      * @param brick the brick to check
      * @return      true if this brick can connect to the one given, otherwise false
      */
-    public boolean canAddConnection(Brick brick) {
+    public boolean supportsConnection(Brick brick) {
         return getSupportedConnectionTypes().contains(brick.getClass())
                 && brick.getSupportedConnectionTypes().contains(getClass());
+    }
+
+    private void addConnectionUnchecked(Brick brick) {
+        connections.add(brick);
     }
 
     /**
@@ -151,12 +155,12 @@ public abstract class Brick<T> {
      * @param brick the brick to add a connection to
      */
     public void addConnection(Brick brick) {
-        if (canAddConnection(brick) && brick.canAddConnection(this)) {
-            if (hasConnection(brick) || brick.hasConnection(this)) {
+        if (supportsConnection(brick) && brick.supportsConnection(this)) {
+            if (hasConnection(brick)) {
                 throw new IllegalArgumentException("You may not add multiple links between the same bricks.");
             } else {
-                connections.add(brick);
-                brick.addConnection(brick);
+                addConnectionUnchecked(brick);
+                brick.addConnectionUnchecked(this);
             }
         } else {
             throw new IllegalArgumentException("You may not connect a brick of type '" + getTypeName()
@@ -196,7 +200,7 @@ public abstract class Brick<T> {
     /**
      * Returns the Rectangle instance that represents the size and position of this brick.
      * 
-     * @return the Rectangle instance
+     * @return  the Rectangle instance
      */
     public Rectangle getBounds() {
         return new Rectangle(x, y, getWidth(), getHeight());
@@ -205,9 +209,17 @@ public abstract class Brick<T> {
     /**
      * Returns the underlying instance this brick is representing.
      * 
-     * @return the instance
+     * @return  the instance
      */
     public T getModelObject() {
         return modelObject;
+    }
+
+    /**
+     * Returns true if this brick has an associated context menu. Otherwise returns false.
+     * @return  true if this brick has an associated context menu, otherwise false
+     */
+    public boolean hasContextMenu() {
+        return getContextMenu() != null;
     }
 }

@@ -1,6 +1,5 @@
 package com.sauljohnson.bach;
 
-import javax.swing.*;
 import java.awt.event.MouseEvent;
 
 /**
@@ -20,30 +19,22 @@ public class BrickLinkingState extends BrickSelectedDesignerState {
     }
 
     @Override
-    protected void handleMouseClicked(MouseEvent e) {
-        if (SwingUtilities.isLeftMouseButton(e)) {
-            if (getSelectedBrick() != null) {
-                designer.setSelectedAgentTryingToLink(false);
-                designer.selectAgent(getSelectedBrick());
-            } else {
-                designer.setSelectedAgentTryingToLink(false);
-                designer.clearSelection();
-            }
-        }
-    }
-
-    @Override
-    protected void handleMouseDragged(MouseEvent e) {
-        designer.repaint();
-    }
-
-    @Override
     protected void handleMouseMoved(MouseEvent e) {
         designer.repaint();
     }
 
     @Override
     protected void handleMousePressed(MouseEvent e) {
-        handleMouseClicked(e);
+        System.out.println("Linking event triggered made.");
+
+        final Brick brickClicked = designer.getBrickAt(e.getPoint());
+        if (brickClicked != null) {
+            if (getSelectedBrick().supportsConnection(brickClicked)
+                    && !getSelectedBrick().hasConnection(brickClicked)) {
+                getSelectedBrick().addConnection(brickClicked);
+            }
+            designer.selectBrick(brickClicked);
+        }
+        designer.setState(new DefaultState(designer));
     }
 }
