@@ -1,7 +1,7 @@
 package com.sauljohnson.bach;
 
 import java.awt.BorderLayout;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 /**
  * Represents a Network Design tab.
@@ -18,13 +18,13 @@ public class NetworkDesignTab extends JPanel {
     /**
      * Initialises an instance of a network design tab.
      */
-    public NetworkDesignTab() {
+    public NetworkDesignTab(JPopupMenu emptySpacePopup) {
         
         super();
 
         this.setLayout(new BorderLayout());
 
-        final NetworkDesigner designer = new NetworkDesigner();
+        final Designer designer = new Designer(emptySpacePopup);
         this.add(designer, BorderLayout.CENTER);
         
     }

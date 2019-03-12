@@ -10,14 +10,14 @@ public class DesignerEvent {
     /**
      * The AgentDisplayable that triggered the event.
      */
-    private final AgentDisplayable source;
+    private final Brick source;
     
     /**
      * Initialises a new instance of a designer event.
      * 
      * @param source The AgentDisplayable that triggered the event.
      */
-    public DesignerEvent(AgentDisplayable source) {
+    public DesignerEvent(Brick source) {
     
         this.source = source;
     
@@ -28,7 +28,7 @@ public class DesignerEvent {
      * 
      * @return The AgentDisplayable that triggered the event.
      */
-    public AgentDisplayable getSource() {
+    public Brick getSource() {
         
         return source;
         

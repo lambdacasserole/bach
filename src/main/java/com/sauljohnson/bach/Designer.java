@@ -1,39 +1,33 @@
 package com.sauljohnson.bach;
 
-import centralcommand.designer.dialogs.AgentPropertiesDialog;
-import centralcommand.designer.dialogs.CreateAgentDialog;
-import centralcommand.designer.dialogs.AgentConnectionsDialog;
-import centralcommand.designer.dialogs.AgentRoutingDialog;
-import denobo.Agent;
-import denobo.socket.SocketAgent;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.JComponent;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 
 /**
  * A Multi-Agent-System network designer for Denobo.
  *
  * @author  Saul Johnson, Alex Mullen, Lee Oliver
  */
-public class Designer extends JComponent implements ActionListener {
+public class Designer extends JComponent {
     
     // Grid line constants.
-    
+
+    public int getGridSpacing() {
+        return gridSpacing;
+    }
+
     /**
      * The number of pixels each grid line is separated by.
      */
@@ -65,7 +59,11 @@ public class Designer extends JComponent implements ActionListener {
    
     
     // Menu for right-clicking on empty space.
-    
+
+    public JPopupMenu getEmptySpacePopup() {
+        return emptySpacePopup;
+    }
+
     /**
      * The pop-up menu that appears when some empty space is right-clicked on. 
      */
@@ -79,46 +77,88 @@ public class Designer extends JComponent implements ActionListener {
     private final List<Brick> agents;
     
     /**
-     * The list of BrickLink instances currently on this designer.
-     */
-    private final List<BrickLink> BrickLinks;
-    
-    /**
      * The list of DesignerEventListeners that are observing this designer.
      */
     private final List<DesignerEventListener> designerEventListeners;
-    
+
+    public List<DesignerEventListener> getDesignerEventListeners() {
+        return Collections.unmodifiableList(designerEventListeners);
+    }
     
     // State data to save in-between events.
-    
+
+    public Point getLastMenuClickPosition() {
+        return lastMenuClickPosition;
+    }
+
+    public void setLastMenuClickPosition(Point lastMenuClickPosition) {
+        this.lastMenuClickPosition = lastMenuClickPosition;
+    }
+
     /**
      * The last right-click position so we know where to place agents in the
      * designer on creation of one.
      */
     private Point lastMenuClickPosition;
-    
-    /** 
+
+    public Point getSelectedComponentDragOffset() {
+        return selectedComponentDragOffset;
+    }
+
+    public void setSelectedComponentDragOffset(Point selectedComponentDragOffset) {
+        this.selectedComponentDragOffset = selectedComponentDragOffset;
+    }
+
+    /**
      * The offset of the cursor relative to the initial click on a component 
      * before dragging.
      */
     private Point selectedComponentDragOffset;
-    
+
+    public DesignerState getState() {
+        return state;
+    }
+
+    public void setState(DesignerState state) {
+        this.state = state;
+    }
+
     /**
      * The current state this designer is in.
      */
     private DesignerState state;
-    
+
+    public Brick getAgentSelected() {
+        return agentSelected;
+    }
+
+    public void setAgentSelected(Brick agentSelected) {
+        this.agentSelected = agentSelected;
+    }
+
     /**
      * The current agent that is selected or null if none are selected.
      */
     private Brick agentSelected;
-    
+
+    public boolean isSelectedAgentTryingToLink() {
+        return isSelectedAgentTryingToLink;
+    }
+
+    public void setSelectedAgentTryingToLink(boolean selectedAgentTryingToLink) {
+        isSelectedAgentTryingToLink = selectedAgentTryingToLink;
+    }
+
     /**
      * Holds whether the selected agent is currently in "link" mode where a link
      * is being dragged from it.
      */
     private boolean isSelectedAgentTryingToLink;
-    
+
+    public boolean isShowGrid() {
+        return showGrid;
+    }
+
     /**
      * Whether or not the grid (and snap-to-grid features) are currently enabled.
      */
@@ -130,62 +170,23 @@ public class Designer extends JComponent implements ActionListener {
      * network of agents.
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public Designer() {
+    public Designer(JPopupMenu emptySpacePopup) {
 
         super();
  
         this.setBackground(Color.WHITE);
 
         agents = new ArrayList<>();
-        BrickLinks = new ArrayList<>();
         designerEventListeners = new ArrayList<>();
-        
-        agentSelectedPopup = new JPopupMenu();
-        
-        menuOptionLink = new JMenuItem("Link");
-        menuOptionLink.addActionListener(this);
-        agentSelectedPopup.add(menuOptionLink);
-       
-        agentSelectedPopup.addSeparator();
-        
-        menuOptionsConnections = new JMenuItem("Connections");
-        menuOptionsConnections.addActionListener(this);
-        agentSelectedPopup.add(menuOptionsConnections);
-        
-        menuOptionMonitor = new JMenuItem("Monitor");
-        menuOptionMonitor.addActionListener(this);
-        agentSelectedPopup.add(menuOptionMonitor);
-        
-        menuOptionDebugWindow = new JMenuItem("Debug Window");
-        menuOptionDebugWindow.addActionListener(this);
-        agentSelectedPopup.add(menuOptionDebugWindow);
-        
-        agentSelectedPopup.addSeparator();
-        
-        menuOptionDelete = new JMenuItem("Delete");
-        menuOptionDelete.addActionListener(this);
-        agentSelectedPopup.add(menuOptionDelete);
-        
-        menuOptionRouting = new JMenuItem("Routing");
-        menuOptionRouting.addActionListener(this);
-        agentSelectedPopup.add(menuOptionRouting);
-        
-        agentSelectedPopup.addSeparator();
-        
-        menuOptionProperties = new JMenuItem("Properties");
-        menuOptionProperties.addActionListener(this);
-        agentSelectedPopup.add(menuOptionProperties);
-        
-        emptySpacePopup = new JPopupMenu();
-        
-        menuOptionCreateAgent = new JMenuItem("Create Agent");
-        menuOptionCreateAgent.addActionListener(this);
-        emptySpacePopup.add(menuOptionCreateAgent);
-        
-        state = new DefaultState();
-        
+
+        // Set empty space popup.
+        this.emptySpacePopup = emptySpacePopup;
+
+        // Default state by default.
+        state = new DefaultState(this);
+
+        // Delegate mouse events to state.
         this.addMouseListener(new MouseListener() {
-            
             @Override
             public void mouseClicked(MouseEvent e) {
                 state.handleMouseClicked(e);
@@ -210,11 +211,10 @@ public class Designer extends JComponent implements ActionListener {
             public void mouseExited(MouseEvent e) {
                 state.handleMouseExited(e);
             }
-
         });
 
+        // Delegate mouse motion events to state.
         this.addMouseMotionListener(new MouseMotionListener() {
-            
             @Override
             public void mouseDragged(MouseEvent e) {
                 state.handleMouseDragged(e);
@@ -224,9 +224,7 @@ public class Designer extends JComponent implements ActionListener {
             public void mouseMoved(MouseEvent e) {
                 state.handleMouseMoved(e);
             }
-            
         });
-        
     }
 
     /**
@@ -235,9 +233,7 @@ public class Designer extends JComponent implements ActionListener {
      * @param showGrid Whether or not to showDialog the grid and enable snap-to-grid features.
      */
     public void setShowGrid(boolean showGrid) {
-    
         this.showGrid = showGrid;
-        
     }
     
     /**
@@ -246,9 +242,7 @@ public class Designer extends JComponent implements ActionListener {
      * @return true if the grid is set to showDialog otherwise false.
      */
     public boolean getShowGrid() {
-    
         return showGrid;
-        
     }
     
     /**
@@ -257,23 +251,9 @@ public class Designer extends JComponent implements ActionListener {
      * @param listener The listener object to add.
      */
     public void addDesignerEventListener(DesignerEventListener listener) {
-        
         designerEventListeners.add(listener);
-        
     }
-    
-    /**
-     * Returns the list of BrickLink objects that visually represent the links
-     * between agents.
-     * 
-     * @return The list of BrickLink objects in this designer.
-     */
-    public List<BrickLink> getBrickLinks() {
-        
-        return BrickLinks;
-        
-    }
-    
+
     /**
      * Returns the list of Brick objects that visually represent the
      * agents in the designer.
@@ -281,11 +261,14 @@ public class Designer extends JComponent implements ActionListener {
      * @return The list of Brick objects in this designer.
      */
     public List<Brick> getBricks() {
-        
         return agents;
-        
     }
-    
+
+    public void addBrick(Brick g) {
+        agents.add(g);
+        this.repaint();
+    }
+
     /**
      * Returns the top-most agent (if any) at a particular position.
      * 
@@ -293,62 +276,16 @@ public class Designer extends JComponent implements ActionListener {
      * @return          The agent selected or null is returned if there is no
      *                  agent at that position.
      */
-    private Brick getAgentAt(Point point) {
-        
-        /* 
-         * Start at the end of the array since the agents at the end will be the
-         * ones that are rendered last, thus are on top.
+    public Brick getBrickAt(Point point) {
+        /* Start at the end of the array since the agents at the end will be the ones that are rendered last, thus are
+         * on top.
          */
         for (int i = (agents.size() - 1); i >= 0; i--) {
             if (agents.get(i).getBounds().contains(point)) {
                 return agents.get(i);
             }
         }
-        
         return null;
-        
-    }
-    
-    /**
-     * Returns whether two Brick's are already linked in the designer.
-     * 
-     * @param agent1    the first agent
-     * @param agent2    the second agent
-     * @return          true if they are already linked, otherwise false
-     */
-    private boolean linkAlreadyExistsBetween(Brick agent1, Brick agent2) {
-        
-        for (BrickLink currentBrickLink : BrickLinks) {
-            if (currentBrickLink.contains(agent1, agent2)) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-    /**
-     * Links two Brick instances together in this Designer.
-     * <p>
-     * If the two agents are the same or the two agents are already linked, this
-     * method will not link them.
-     * 
-     * @param agent1 the first agent to link
-     * @param agent2 the second agent to link
-     */
-    private void linkAgents(Brick agent1, Brick agent2) {
-        
-        if ((agent1 == agent2) || (linkAlreadyExistsBetween(agent1, agent2))) {
-            return;
-        }
-        
-        final BrickLink link = new BrickLink(agent1, agent2);
-        BrickLinks.add(link);
-        
-        for (DesignerEventListener currentListener : designerEventListeners) {
-            currentListener.linkCreated(link);
-        }
-        
     }
     
     /**
@@ -357,14 +294,8 @@ public class Designer extends JComponent implements ActionListener {
      * @param agent The agent to shutdown and remove.
      */
     public void removeAgent(Brick agent) {
-        
-        agent.getDebugWindow().dispose();
-        agent.getMonitorDialog().dispose();
-        
-        agent.getModelObject().shutdown();
-        
+        agent.removeAllConnections();
         agents.remove(agent);
-        removeAnyLinksContaining(agent);
         
         if (agentSelected == agent) {
             clearSelection();
@@ -390,63 +321,6 @@ public class Designer extends JComponent implements ActionListener {
     }
     
     /**
-     * Removes any BrickLink's containing the specified agent.
-     * 
-     * @param agent The agent to remove any links to.
-     */
-    public void removeAnyLinksContaining(Brick agent) {
-
-        final Iterator<BrickLink> iter = BrickLinks.iterator();
-        while (iter.hasNext()) {
-            
-            final BrickLink currentBrickLink = iter.next();
-            if (currentBrickLink.contains(agent)) {
-                
-                currentBrickLink.breakLink();
-                iter.remove();
-                
-                for (DesignerEventListener currentListener : designerEventListeners) {
-                    currentListener.linkDeleted(currentBrickLink);
-                }
-                
-            }
-            
-        }
-
-        this.repaint();
-
-    }
-    
-    /**
-     * Removes any BrickLink's between the specified two agents.
-     * 
-     * @param agent1 The first agent.
-     * @param agent2 The second agent.
-     */
-    public void removeAnyLinksContaining(Brick agent1, Brick agent2) {
-        
-        final Iterator<BrickLink> iter = BrickLinks.iterator();
-        while (iter.hasNext()) {
-            
-            final BrickLink currentBrickLink = iter.next();
-            if (currentBrickLink.contains(agent1, agent2)) {
-                
-                currentBrickLink.breakLink();
-                iter.remove();
-                
-                for (DesignerEventListener currentListener : designerEventListeners) {
-                    currentListener.linkDeleted(currentBrickLink);
-                }
-                
-            }
-            
-        }
-
-        this.repaint();
-
-    }
-    
-    /**
      * Set's the specified agent as the one selected.
      * 
      * @param agent The agent to set as the selected agent.
@@ -454,7 +328,7 @@ public class Designer extends JComponent implements ActionListener {
     public void selectAgent(Brick agent) {
         
         agentSelected = agent;
-        state = new AgentSelectedState();
+        state = new BrickSelectedState(this);
         this.repaint();
         
         for (DesignerEventListener currentListener : designerEventListeners) {
@@ -469,7 +343,7 @@ public class Designer extends JComponent implements ActionListener {
     public void clearSelection() {
 
         agentSelected = null;
-        state = new DefaultState();
+        state = new DefaultState(this);
         this.repaint();
         
         for (DesignerEventListener currentListener : designerEventListeners) {
@@ -477,68 +351,7 @@ public class Designer extends JComponent implements ActionListener {
         }
         
     }
-    
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        
-        if (e.getSource() == menuOptionCreateAgent) {
-            
-            createAgentDialog = new CreateAgentDialog();
-            final Agent agentToAdd = createAgentDialog.showDialog(lastMenuClickPosition);
-            if (agentToAdd != null) {
 
-                if (agentToAdd instanceof SocketAgent) {
-                          
-                    agents.add(new SocketBrick((SocketAgent) agentToAdd, 
-                                lastMenuClickPosition.x - (Brick.WIDTH / 2), 
-                                lastMenuClickPosition.y - (Brick.HEIGHT / 2)));
-                
-                } else {
-                    
-                    agents.add(new Brick(agentToAdd, 
-                                lastMenuClickPosition.x - (Brick.WIDTH / 2), 
-                                lastMenuClickPosition.y - (Brick.HEIGHT / 2)));
-
-                }
-
-                this.repaint();
-
-            }
-            
-        } else if (e.getSource() == menuOptionsConnections) {
-            
-            agentConnectionsDialog.showDialog(agentSelected.getBounds().getLocation(), agentSelected);
-
-        } else if (e.getSource() == menuOptionMonitor) {
-            
-            agentSelected.getMonitorDialog().showAt(agentSelected.getBounds().getLocation());
-            
-        } else if (e.getSource() == menuOptionDebugWindow) {
-                    
-            agentSelected.getDebugWindow().showAt(this, lastMenuClickPosition);
-            
-        } else if (e.getSource() == menuOptionDelete) {
-            
-            removeAgent(agentSelected);
-            
-        } else if (e.getSource() == menuOptionRouting) {
-            
-            new AgentRoutingDialog().show(agentSelected.getModelObject(), lastMenuClickPosition);
-            
-        } else if (e.getSource() == menuOptionProperties) {
-            
-            agentPropertiesDialog.showDialog(agentSelected.getBounds().getLocation(), agentSelected.getModelObject());
-
-        } else if (e.getSource() == menuOptionLink) {
-
-            isSelectedAgentTryingToLink = true;
-            state = new BrickLinkingState();
-            this.repaint();
-            
-        }
-        
-    }
-   
     /**
      * Performs a repaint of this designer component.
      * 
@@ -574,19 +387,26 @@ public class Designer extends JComponent implements ActionListener {
             
         }
         
-        for (BrickLink currentLink : BrickLinks) {
-            currentLink.draw(g);
-        }
-        
-        for (Brick currentAgent : agents) {
-            if (currentAgent != agentSelected) {
-                currentAgent.draw(g);
+        for (Brick CurrentAgent : agents) {
+            final int sourceX = (CurrentAgent.getBounds().x + (CurrentAgent.getBounds().width / 2));
+            final int sourceY = (CurrentAgent.getBounds().y + (CurrentAgent.getBounds().height / 2));
+            for (Object otherAgent : CurrentAgent.getConnections()) {
+Brick gg = (Brick) otherAgent;
+                final int destX = (gg.getBounds().x + (gg.getBounds().width / 2));
+                final int destY = (gg.getBounds().y + (gg.getBounds().height / 2));
+
+                g.setColor(Color.BLACK); // TODO: Break this out.
+                g.drawLine(sourceX, sourceY, destX, destY);
             }
+        }
+
+        for (Brick currentAgent : agents) {
+            g.drawImage(currentAgent.getImage(), currentAgent.getX(), currentAgent.getY(), null);
         }
         
         if (agentSelected != null) { 
             
-            agentSelected.draw(g);
+//            agentSelected.draw(g);
             
             // Dotted bounding box on selected agent.
             final Rectangle agentBounds = agentSelected.getBounds();
@@ -609,303 +429,4 @@ public class Designer extends JComponent implements ActionListener {
         paintComponent((Graphics2D) g); // We need Graphics2D for advanced drawing methods.
 
     }
-    
-    /**
-     * A class that represents a state that a Designer object can be in.
-     */
-    private abstract class DesignerState {
-        
-        /**
-         * Invoked when the mouse button has been clicked (pressed and released)
-         * on the designer.
-         * 
-         * @param e     event data
-         */
-        protected void handleMouseClicked(MouseEvent e) { }
-        
-        /**
-         * Invoked when a mouse button is pressed on the designer and then
-         * dragged.
-         * 
-         * @param e     event data
-         */
-        protected void handleMouseDragged(MouseEvent e) { }
-        
-        /**
-         * Invoked when the mouse cursor has been moved over the designer area
-         * but no buttons have been pushed.
-         * 
-         * @param e     event data
-         */
-        protected void handleMouseMoved(MouseEvent e) { }
-        
-        /**
-         * Invoked when a mouse button has been pressed on the designer area.
-         * 
-         * @param e     event data
-         */
-        protected void handleMousePressed(MouseEvent e) { }
-        
-        /**
-         * Invoked when a mouse button has been released on the designer area.
-         * 
-         * @param e     event data
-         */
-        protected void handleMouseReleased(MouseEvent e) { }
-        
-        /**
-         * Invoked when the mouse enters the designer area.
-         * 
-         * @param e     event data
-         */
-        protected void handleMouseEntered(MouseEvent e) { }
-        
-        /**
-         * Invoked when the mouse exits the designer area.
-         * 
-         * @param e     event data
-         */
-        protected void handleMouseExited(MouseEvent e) { }
-        
-    }
-    
-    ////////////////////////////////////////////////////////////////////////////
-    
-    /**
-     * A class that represents the default state where nothing is really currently 
-     * happening. (Nothing selected, nothing getting dragged or nothing linking)
-     */
-    private class DefaultState extends DesignerState {
-
-        @Override
-        protected void handleMouseClicked(MouseEvent e) {
-
-            if (SwingUtilities.isLeftMouseButton(e)) {
-                
-                final Brick agentClicked = getAgentAt(e.getPoint());
-                
-                if (agentClicked != null) {
-                    selectAgent(agentClicked);
-                }
-                
-            } else if (SwingUtilities.isRightMouseButton(e)) {
-                
-                lastMenuClickPosition = e.getPoint();
-                emptySpacePopup.show(e.getComponent(), e.getX(), e.getY());
-                
-            }
-
-        }
-
-        @Override
-        protected void handleMousePressed(MouseEvent e) {
-
-            if (SwingUtilities.isLeftMouseButton(e)) {
-                
-                final Brick agentClicked = getAgentAt(e.getPoint());
-                
-                if (agentClicked != null) {
-                    
-                    agentSelected = agentClicked;
-                    state = new AgentDraggingState();
-                    selectedComponentDragOffset = new Point(e.getX() - agentSelected.getBounds().x, e.getY() - agentSelected.getBounds().y);
-                    Designer.this.repaint();
-
-                }               
-                
-            }
-
-        }
-
-        @Override
-        protected void handleMouseReleased(MouseEvent e) {
-            
-            if (SwingUtilities.isRightMouseButton(e)) {
-                
-                final Brick agentClicked = getAgentAt(e.getPoint());
-                
-                if (agentClicked != null) {
-                    
-                    selectAgent(agentClicked);
-
-                    lastMenuClickPosition = e.getPoint();
-                    agentSelectedPopup.show(e.getComponent(), e.getX(), e.getY());
-                    
-                } else {
-                    
-                    lastMenuClickPosition = e.getPoint();
-                    emptySpacePopup.show(e.getComponent(), e.getX(), e.getY());
-                    
-                }
-  
-            }
-
-        }
-
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    
-    /**
-     * A class that represents a state where an agent has been selected.
-     */
-    private class AgentSelectedState extends DesignerState {
-
-        @Override
-        protected void handleMouseClicked(MouseEvent e) {
-
-            final Brick agentClicked = getAgentAt(e.getPoint());
-            
-            if (SwingUtilities.isLeftMouseButton(e)) {
-                
-                if (agentClicked != null) {
-                    selectAgent(agentClicked);
-                } else {
-                    clearSelection();
-                }
-                
-            } else if (SwingUtilities.isRightMouseButton(e)) {
-                
-                if (agentClicked != null) {
-                    
-                    selectAgent(agentClicked);
-                    
-                    lastMenuClickPosition = e.getPoint();
-                    agentSelectedPopup.show(e.getComponent(), e.getX(), e.getY());
-                    
-                } else {
-                    
-                    clearSelection();
-                    
-                    lastMenuClickPosition = e.getPoint();
-                    emptySpacePopup.show(e.getComponent(), e.getX(), e.getY());
-                    
-                }
-                
-            }
-
-        }
-
-        @Override
-        protected void handleMousePressed(MouseEvent e) {
-            
-            if (SwingUtilities.isLeftMouseButton(e)) {
-                
-                final Brick agentClicked = getAgentAt(e.getPoint());
-                
-                if (agentClicked != null) {
-                    
-                    agentSelected = agentClicked;
-                    state = new AgentDraggingState();
-                    selectedComponentDragOffset = new Point(e.getX() - agentSelected.getBounds().x, e.getY() - agentSelected.getBounds().y);
-                    Designer.this.repaint();
-
-                }               
-                
-            }
-            
-        }
-
-        @Override
-        protected void handleMouseReleased(MouseEvent e) {
-
-            handleMouseClicked(e);
-
-        }
-
-    }
-    
-    ////////////////////////////////////////////////////////////////////////////
-    
-    /**
-     * A class that represents a state where an agent is currently being dragged
-     * in the designer.
-     */
-    private class AgentDraggingState extends DesignerState {
-
-        @Override
-        protected void handleMouseDragged(MouseEvent e) {
-            
-            int newX = (e.getX() - selectedComponentDragOffset.x);
-            int newY = (e.getY() - selectedComponentDragOffset.y);
-
-            if (showGrid) {
-                newX = newX - (newX % gridSpacing);
-                newY = newY - (newY % gridSpacing);
-            }
-
-            agentSelected.getBounds().x = newX;
-            agentSelected.getBounds().y = newY;
-            Designer.this.repaint();
-            
-            for (DesignerEventListener currentListener : designerEventListeners) {
-                currentListener.agentMoved(agentSelected);
-            }
-
-        }
-        
-        @Override
-        protected void handleMouseReleased(MouseEvent e) {
-            
-            state = new AgentSelectedState();
-            
-        }
-
-    }
-    
-    ////////////////////////////////////////////////////////////////////////////
-    
-    /**
-     * A class that represents a state where there is a link attached to the
-     * selected agent with the other end attached to the mouse cursor position.
-     */
-    private class BrickLinkingState extends DesignerState {
-
-        @Override
-        protected void handleMouseClicked(MouseEvent e) {
-            
-            if (SwingUtilities.isLeftMouseButton(e)) {
-                
-                final Brick agentClicked = getAgentAt(e.getPoint());
-                
-                if (agentClicked != null) {
-                    
-                    linkAgents(agentSelected, agentClicked);
-                    isSelectedAgentTryingToLink = false;
-                    selectAgent(agentClicked);
-
-                } else {
-                    
-                    isSelectedAgentTryingToLink = false;
-                    clearSelection();
-                    
-                }
-                
-            }
-
-        }
-
-        @Override
-        protected void handleMouseDragged(MouseEvent e) {
-
-            Designer.this.repaint();
-            
-        }
-
-        @Override
-        protected void handleMouseMoved(MouseEvent e) {
-
-            Designer.this.repaint();
-            
-        }
-
-        @Override
-        protected void handleMousePressed(MouseEvent e) {
-
-            handleMouseClicked(e);
-            
-        }
-
-    }
-
 }

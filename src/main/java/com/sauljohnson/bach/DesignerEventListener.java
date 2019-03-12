@@ -12,28 +12,28 @@ public interface DesignerEventListener {
      * 
      * @param agent The agent that was added.
      */
-    public void agentAdded(AgentDisplayable agent);
+    public void agentAdded(Brick agent);
     
     /**
      * Raised when an agent is deleted from the designer.
      * 
      * @param agent The agent that was deleted.
      */
-    public void agentDeleted(AgentDisplayable agent);
+    public void agentDeleted(Brick agent);
     
     /**
      * Raised when an agent is selected in the designer.
      * 
      * @param agent The agent that was selected.
      */
-    public void agentSelected(AgentDisplayable agent);
+    public void agentSelected(Brick agent);
     
     /**
      * Raised when an agent has been repositioned in the designer.
      * 
      * @param agent The agent that has been repositioned/moved.
      */
-    public void agentMoved(AgentDisplayable agent);
+    public void agentMoved(Brick agent);
 
     /**
      * Raised when a previously selected agent is now not selected and nothing
@@ -47,13 +47,13 @@ public interface DesignerEventListener {
      * 
      * @param link The link that was created.
      */
-    public void linkCreated(AgentLink link);
+    public void linkCreated(Brick link);
     
     /**
      * Raised when an agent link is broken then deleted in the designer.
      * 
      * @param link The link that is and has been deleted.
      */
-    public void linkDeleted(AgentLink link);
+    public void linkDeleted(Brick link);
     
 }
