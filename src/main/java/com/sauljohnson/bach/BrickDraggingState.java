@@ -1,5 +1,6 @@
 package com.sauljohnson.bach;
 
+import java.awt.*;
 import java.awt.event.MouseEvent;
 
 /**
@@ -7,19 +8,24 @@ import java.awt.event.MouseEvent;
  *
  * @author  Saul Johnson, Alex Mullen, Lee Oliver
  */
-public class BrickDraggingState extends BrickSelectedDesignerState {
+class BrickDraggingState extends BrickSelectedDesignerState {
 
     /**
      * Initialises a new instance of a state in which a brick is currently being dragged in a designer.
      *
      * @param designer  the designer this state relates to
      */
-    public BrickDraggingState(Designer designer) {
+    BrickDraggingState(Designer designer) {
         super(designer);
     }
 
     @Override
-    protected void handleMouseDragged(MouseEvent e) {
+    DesignerStateType getType() {
+        return DesignerStateType.BRICK_DRAGGING;
+    }
+
+    @Override
+    void handleMouseDragged(MouseEvent e) {
 
         // Compute new location.
         int newX = e.getX() - designer.getSelectedComponentDragOffset().x;
@@ -38,12 +44,12 @@ public class BrickDraggingState extends BrickSelectedDesignerState {
 
         // Raise events with observers.
         for (DesignerEventListener currentListener : designer.getDesignerEventListeners()) {
-            currentListener.brickMoved(getSelectedBrick());
+            currentListener.brickMoved(getSelectedBrick(), new Point(newX, newY));
         }
     }
 
     @Override
-    protected void handleMouseReleased(MouseEvent e) {
+    void handleMouseReleased(MouseEvent e) {
 
         // Brick released, revert state.
         designer.setState(new DefaultState(designer));

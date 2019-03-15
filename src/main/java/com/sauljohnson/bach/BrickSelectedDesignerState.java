@@ -5,14 +5,14 @@ package com.sauljohnson.bach;
  *
  * @author  Saul Johnson, Alex Mullen, Lee Oliver
  */
-public abstract class BrickSelectedDesignerState extends DesignerState {
+abstract class BrickSelectedDesignerState extends DesignerState {
 
     /**
      * Initialises a new instance of an abstract state in which a brick is selected in a designer.
      *
      * @param designer  the designer this state relates to
      */
-    protected BrickSelectedDesignerState(Designer designer) {
+    BrickSelectedDesignerState(Designer designer) {
         super(designer);
     }
 
@@ -21,7 +21,7 @@ public abstract class BrickSelectedDesignerState extends DesignerState {
      *
      * @return  the selected brick in the designer
      */
-    public Brick getSelectedBrick() {
+    Brick getSelectedBrick() {
         return designer.getSelectedBrick();
     }
 }

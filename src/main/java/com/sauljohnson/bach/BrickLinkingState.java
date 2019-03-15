@@ -7,24 +7,29 @@ import java.awt.event.MouseEvent;
  *
  * @author  Saul Johnson, Alex Mullen, Lee Oliver
  */
-public class BrickLinkingState extends BrickSelectedDesignerState {
+class BrickLinkingState extends BrickSelectedDesignerState {
 
     /**
      * Initialises a new instance of a state in which a brick is currently being linked to another in a designer.
      *
      * @param designer  the designer this state relates to
      */
-    public BrickLinkingState(Designer designer){
+    BrickLinkingState(Designer designer){
         super(designer);
     }
 
     @Override
-    protected void handleMouseMoved(MouseEvent e) {
+    DesignerStateType getType() {
+        return DesignerStateType.BRICK_LINKING;
+    }
+
+    @Override
+    void handleMouseMoved(MouseEvent e) {
         designer.repaint();
     }
 
     @Override
-    protected void handleMousePressed(MouseEvent e) {
+    void handleMousePressed(MouseEvent e) {
 
         // If brick was clicked.
         final Brick brickClicked = designer.getBrickAt(e.getPoint());
@@ -34,8 +39,19 @@ public class BrickLinkingState extends BrickSelectedDesignerState {
             if (getSelectedBrick().canConnect(brickClicked)
                     && !getSelectedBrick().hasConnection(brickClicked)) {
                 getSelectedBrick().addConnection(brickClicked);
+
+                // Inform observers of linking event.
+                for (DesignerEventListener currentListener : designer.getDesignerEventListeners()) {
+                    currentListener.linkCreated(getSelectedBrick(), brickClicked);
+                }
+            } else {
+
+                // Inform observers of refusal event.
+                for (DesignerEventListener currentListener : designer.getDesignerEventListeners()) {
+                    currentListener.linkRefused(getSelectedBrick(), brickClicked);
+                }
             }
-            designer.selectBrick(brickClicked);
+            designer.setSelectedBrick(brickClicked);
         }
 
         // Revert state to default (i.e. leave linking state).

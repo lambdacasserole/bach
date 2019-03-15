@@ -52,6 +52,7 @@ public abstract class Brick<T> {
      *
      * @return  the x-coordinate of the brick in the designer in pixels
      */
+    @SuppressWarnings("WeakerAccess") // API method.
     public int getX() {
         return x;
     }
@@ -61,6 +62,7 @@ public abstract class Brick<T> {
      *
      * @param x the new x-coordinate of the brick in the designer in pixels
      */
+    @SuppressWarnings("WeakerAccess") // API method.
     public void setX(int x) {
         this.x = x;
     }
@@ -70,6 +72,7 @@ public abstract class Brick<T> {
      *
      * @return  the y-coordinate of the brick in the designer in pixels
      */
+    @SuppressWarnings("WeakerAccess") // API method.
     public int getY() {
         return y;
     }
@@ -79,6 +82,7 @@ public abstract class Brick<T> {
      *
      * @param y the new y-coordinate of the brick in the designer in pixels
      */
+    @SuppressWarnings("WeakerAccess") // API method.
     public void setY(int y) {
         this.y = y;
     }
@@ -88,6 +92,7 @@ public abstract class Brick<T> {
      *
      * @return  the name of the brick type
      */
+    @SuppressWarnings("WeakerAccess") // API method.
     public abstract String getTypeName();
 
     /**
@@ -95,6 +100,7 @@ public abstract class Brick<T> {
      *
      * @return  the width of the brick in pixels
      */
+    @SuppressWarnings("WeakerAccess") // API method.
     public abstract int getWidth();
 
     /**
@@ -102,6 +108,7 @@ public abstract class Brick<T> {
      *
      * @return  the height of the brick in pixels
      */
+    @SuppressWarnings("WeakerAccess") // API method.
     public abstract int getHeight();
 
     /**
@@ -109,6 +116,7 @@ public abstract class Brick<T> {
      *
      * @return  the image that represents the brick
      */
+    @SuppressWarnings("WeakerAccess") // API method.
     public abstract Image getImage();
 
     /**
@@ -116,13 +124,25 @@ public abstract class Brick<T> {
      *
      * @return  the popup menu for the brick
      */
+    @SuppressWarnings("WeakerAccess") // API method.
     public abstract JPopupMenu getContextMenu();
+
+    /**
+     * Returns true if this brick has an associated context menu. Otherwise returns false.
+     *
+     * @return  true if this brick has an associated context menu, otherwise false
+     */
+    @SuppressWarnings("WeakerAccess") // API method.
+    public boolean hasContextMenu() {
+        return getContextMenu() != null;
+    }
 
     /**
      * Gets the list of connection capacities for the brick.
      *
      * @return  the list of supported connection capacities for the brick
      */
+    @SuppressWarnings("WeakerAccess") // API method.
     public abstract List<ConnectionCapacity> getConnectionCapacities();
 
     /**
@@ -130,6 +150,7 @@ public abstract class Brick<T> {
      *
      * @return  the list of bricks this brick is connected to
      */
+    @SuppressWarnings("WeakerAccess") // API method.
     public List<Brick> getConnections() {
         return Collections.unmodifiableList(connections);
     }
@@ -140,7 +161,7 @@ public abstract class Brick<T> {
      * @param brick the brick to check
      * @return      true if this brick can connect to the type of the one given, otherwise false
      */
-    public boolean supportsConnection(Brick brick) {
+    private boolean supportsConnection(Brick brick) {
         for (ConnectionCapacity capacity : getConnectionCapacities()) {
             if (capacity.getType() == brick.getClass()) {
                 return true;
@@ -151,10 +172,11 @@ public abstract class Brick<T> {
 
     /**
      * Counts connections having the same type as the given brick.
+     *
      * @param brick the brick for which to count connections of the same type
      * @return      the number of connections having the same type as the given brick
      */
-    public int countConnectionsOfType(Brick brick) {
+    private int countConnectionsOfType(Brick brick) {
         int count = 0;
         for (Brick connection : connections) {
             if (connection.getClass() == brick.getClass()) {
@@ -166,10 +188,11 @@ public abstract class Brick<T> {
 
     /**
      * Gets the maximum connection capacity for connections of the same type as the given brick.
+     *
      * @param brick the brick for which to get the maximum capacity for connections of the same type
      * @return      the maximum connection capacity for connections of the same type as the given brick
      */
-    public int getMaximumConnectionCapacity(Brick brick) {
+    private int getMaximumConnectionCapacity(Brick brick) {
         for (ConnectionCapacity capacity : getConnectionCapacities()) {
             if (capacity.getType() == brick.getClass()) {
                 return capacity.getCount();
@@ -184,6 +207,7 @@ public abstract class Brick<T> {
      * @param brick the brick to check
      * @return      true if this brick can connect to the one given, otherwise false
      */
+    @SuppressWarnings("WeakerAccess") // API method.
     public boolean canConnect(Brick brick) {
 
         // Bidirectional support and bidirectional capacity required.
@@ -206,6 +230,7 @@ public abstract class Brick<T> {
      *
      * @param brick the brick to add a connection to
      */
+    @SuppressWarnings("WeakerAccess") // API method.
     public void addConnection(Brick brick) {
         if (canConnect(brick) && brick.canConnect(this)) {
             if (hasConnection(brick)) {
@@ -226,6 +251,7 @@ public abstract class Brick<T> {
      * @param brick the brick to check
      * @return      true if this brick is connected to the one given, otherwise false
      */
+    @SuppressWarnings("WeakerAccess") // API method.
     public boolean hasConnection(Brick brick) {
         return connections.contains(brick);
     }
@@ -235,6 +261,7 @@ public abstract class Brick<T> {
      *
      * @param brick the brick to remove the connection to
      */
+    @SuppressWarnings("WeakerAccess") // API method.
     public void removeConnection(Brick brick) {
         connections.remove(brick);
         brick.connections.remove(brick);
@@ -243,6 +270,7 @@ public abstract class Brick<T> {
     /**
      * Removes all connections from the brick.
      */
+    @SuppressWarnings("WeakerAccess") // API method.
     public void removeAllConnections() {
         while (connections.size() > 0) {
             removeConnection(connections.get(0));
@@ -254,6 +282,7 @@ public abstract class Brick<T> {
      * 
      * @return  the Rectangle instance
      */
+    @SuppressWarnings("WeakerAccess") // API method.
     public Rectangle getBounds() {
         return new Rectangle(x, y, getWidth(), getHeight());
     }
@@ -263,15 +292,8 @@ public abstract class Brick<T> {
      * 
      * @return  the instance
      */
+    @SuppressWarnings("unused") // API method.
     public T getModelObject() {
         return modelObject;
-    }
-
-    /**
-     * Returns true if this brick has an associated context menu. Otherwise returns false.
-     * @return  true if this brick has an associated context menu, otherwise false
-     */
-    public boolean hasContextMenu() {
-        return getContextMenu() != null;
     }
 }

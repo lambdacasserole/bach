@@ -17,8 +17,13 @@ public class DefaultState extends DesignerState {
      *
      * @param designer  the designer this state relates to
      */
-    public DefaultState(Designer designer){
+    DefaultState(Designer designer){
         super(designer);
+    }
+
+    @Override
+    DesignerStateType getType() {
+        return DesignerStateType.DEFAULT;
     }
 
     @Override
@@ -32,7 +37,7 @@ public class DefaultState extends DesignerState {
 
         final Brick brickClicked = designer.getBrickAt(e.getPoint());
         if (brickClicked != null) {
-            designer.selectBrick(brickClicked); // Brick clicked, select it.
+            designer.setSelectedBrick(brickClicked); // Brick clicked, select it.
             designer.setSelectedComponentDragOffset(new Point(e.getX() - brickClicked.getX(),
                     e.getY() - brickClicked.getY()));
 

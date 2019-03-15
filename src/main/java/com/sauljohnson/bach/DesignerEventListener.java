@@ -1,5 +1,7 @@
 package com.sauljohnson.bach;
 
+import java.awt.*;
+
 /**
  * A specialised event listener designed to listen for events raised by a {@link Designer} control.
  * 
@@ -12,46 +14,49 @@ public interface DesignerEventListener {
      * 
      * @param brick The brick that was added.
      */
-    public void brickAdded(Brick brick);
+    void brickAdded(Brick brick);
     
     /**
      * Raised when an brick is deleted from the designer.
      * 
      * @param brick The brick that was deleted.
      */
-    public void brickDeleted(Brick brick);
+    void brickRemoved(Brick brick);
     
     /**
      * Raised when an brick is selected in the designer.
      * 
      * @param brick The brick that was selected.
      */
-    public void brickSelected(Brick brick);
+    void brickSelected(Brick brick);
     
     /**
      * Raised when an brick has been repositioned in the designer.
      * 
-     * @param brick The brick that has been repositioned/moved.
+     * @param brick the brick that has been repositioned/moved
+     * @param point the new location of the brick
      */
-    public void brickMoved(Brick brick);
+    void brickMoved(Brick brick, Point point);
 
     /**
      * Raised when a previously selected brick is now not selected and nothing else is currently selected.
      */
-    public void selectionCleared();
-    
+    void selectionCleared();
+
     /**
-     * Raised when an brick is linked with another brick in the designer.
-     * 
-     * @param brick The link that was created.
+     * Raised when a brick is linked with another brick in the designer.
+     *
+     * @param brick1 the first brick
+     * @param brick2 the second brick
      */
-    public void linkCreated(Brick brick);
-    
+    void linkCreated(Brick brick1, Brick brick2);
+
     /**
-     * Raised when an brick link is broken then deleted in the designer.
-     * 
-     * @param brick The link that is and has been deleted.
+     * Raised when the designer refuses to link a brick with another brick in the designer.
+     *
+     * @param brick1 the first brick
+     * @param brick2 the second brick
      */
-    public void linkDeleted(Brick brick);
+    void linkRefused(Brick brick1, Brick brick2);
     
 }

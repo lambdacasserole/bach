@@ -11,60 +11,67 @@ public abstract class DesignerState {
 
     protected Designer designer;
 
-    protected DesignerState(Designer designer) {
+    DesignerState(Designer designer) {
         this.designer = designer;
     }
 
     /**
-     * Invoked when the mouse button has been clicked (pressed and released)
-     * on the designer.
+     * Gets the type of the designer state.
      *
-     * @param e     event data
+     * @return  the type
      */
-    protected void handleMouseClicked(MouseEvent e) { }
+    abstract DesignerStateType getType();
 
     /**
-     * Invoked when a mouse button is pressed on the designer and then
-     * dragged.
+     * Invoked when the mouse button has been clicked (pressed and released) on the designer.
      *
      * @param e     event data
      */
-    protected void handleMouseDragged(MouseEvent e) { }
+    @SuppressWarnings("UnusedParameters") // Reserved for extension.
+    void handleMouseClicked(MouseEvent e) { }
 
     /**
-     * Invoked when the mouse cursor has been moved over the designer area
-     * but no buttons have been pushed.
+     * Invoked when a mouse button is pressed on the designer and then dragged.
      *
      * @param e     event data
      */
-    protected void handleMouseMoved(MouseEvent e) { }
+    void handleMouseDragged(MouseEvent e) { }
+
+    /**
+     * Invoked when the mouse cursor has been moved over the designer area but no buttons have been pushed.
+     *
+     * @param e     event data
+     */
+    void handleMouseMoved(MouseEvent e) { }
 
     /**
      * Invoked when a mouse button has been pressed on the designer area.
      *
      * @param e     event data
      */
-    protected void handleMousePressed(MouseEvent e) { }
+    void handleMousePressed(MouseEvent e) { }
 
     /**
      * Invoked when a mouse button has been released on the designer area.
      *
      * @param e     event data
      */
-    protected void handleMouseReleased(MouseEvent e) { }
+    void handleMouseReleased(MouseEvent e) { }
 
     /**
      * Invoked when the mouse enters the designer area.
      *
      * @param e     event data
      */
-    protected void handleMouseEntered(MouseEvent e) { }
+    @SuppressWarnings("UnusedParameters") // Reserved for extension.
+    void handleMouseEntered(MouseEvent e) { }
 
     /**
      * Invoked when the mouse exits the designer area.
      *
      * @param e     event data
      */
-    protected void handleMouseExited(MouseEvent e) { }
+    @SuppressWarnings("UnusedParameters") // Reserved for extension.
+    void handleMouseExited(MouseEvent e) { }
 }
     
