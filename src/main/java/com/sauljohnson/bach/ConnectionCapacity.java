@@ -5,7 +5,7 @@ package com.sauljohnson.bach;
  *
  * @author Saul Johnson
  */
-class ConnectionCapacity {
+public class ConnectionCapacity {
 
     /**
      * The connection capacity (i.e. the maximum number of simultaneous connection).
@@ -23,7 +23,7 @@ class ConnectionCapacity {
      * @param count the number number of simultaneous connections
      * @param type  the connection type
      */
-    ConnectionCapacity(int count, Class type) {
+    public ConnectionCapacity(int count, Class type) {
         this.count = count;
         this.type = type;
     }
@@ -33,7 +33,8 @@ class ConnectionCapacity {
      *
      * @return  the connection capacity (i.e. the maximum number of simultaneous connection)
      */
-    int getCount() {
+    @SuppressWarnings("WeakerAccess") // API method.
+    public int getCount() {
         return count;
     }
 
@@ -42,7 +43,8 @@ class ConnectionCapacity {
      *
      * @return  the connection type
      */
-    Class getType() {
+    @SuppressWarnings("WeakerAccess") // API method.
+    public Class getType() {
         return type;
     }
 }
