@@ -264,7 +264,7 @@ public abstract class Brick<T> {
     @SuppressWarnings("WeakerAccess") // API method.
     public void removeConnection(Brick brick) {
         connections.remove(brick);
-        brick.connections.remove(brick);
+        brick.connections.remove(this);
     }
 
     /**
