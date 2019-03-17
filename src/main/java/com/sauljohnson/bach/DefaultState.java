@@ -30,8 +30,12 @@ public class DefaultState extends DesignerState {
     protected void handleMousePressed(MouseEvent e) {
 
         // Linking tag left-clicked, enter linking mode.
-        if (SwingUtilities.isLeftMouseButton(e) && designer.isInLinkingTagBounds(e.getPoint())) {
-            designer.setState(new BrickLinkingState(designer));
+        if (designer.isInLinkingTagBounds(e.getPoint())) {
+            if (SwingUtilities.isLeftMouseButton(e)) {
+                designer.setState(new BrickLinkingState(designer));
+            } else if (SwingUtilities.isRightMouseButton(e)) {
+                designer.setState(new BrickUnlinkingState(designer));
+            }
             return;
         }
 
@@ -53,6 +57,9 @@ public class DefaultState extends DesignerState {
                 brickClicked.getContextMenu().show(e.getComponent(), e.getX(), e.getY());
             }
         } else {
+
+            // Deselect all bricks.
+            designer.clearSelection();
 
             // Empty space right-clicked, show context menu for designer.
             if (SwingUtilities.isRightMouseButton(e) && designer.hasEmptySpacePopup()) {

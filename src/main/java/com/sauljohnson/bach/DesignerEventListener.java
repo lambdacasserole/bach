@@ -58,5 +58,12 @@ public interface DesignerEventListener {
      * @param brick2 the second brick
      */
     void linkRefused(Brick brick1, Brick brick2);
-    
+
+    /**
+     * Raised when a brick is unlinked from another brick in the designer.
+     *
+     * @param brick1 the first brick
+     * @param brick2 the second brick
+     */
+    void linkDeleted(Brick brick1, Brick brick2);
 }

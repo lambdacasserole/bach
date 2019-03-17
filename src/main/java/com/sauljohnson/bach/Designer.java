@@ -59,6 +59,11 @@ public class Designer extends JComponent {
     private Color brickLinkColor;
 
     /**
+     * The colour of the line shown when unlinking bricks.
+     */
+    private Color brickUnlinkingColor;
+
+    /**
      * The colour of the linking tag border.
      */
     private Color linkingTagBorderColor;
@@ -135,6 +140,7 @@ public class Designer extends JComponent {
         gridLineColor = new Color(0, 0, 0, 25);
         selectionBoundingBoxColor = new Color(0, 0, 0, 100);
         brickLinkColor = Color.BLACK;
+        brickUnlinkingColor = Color.RED;
         linkingTagBorderColor = Color.BLACK;
         linkingTagBackgroundColor = Color.WHITE;
 
@@ -291,6 +297,26 @@ public class Designer extends JComponent {
     @SuppressWarnings("unused") // API method.
     public void setBrickLinkColor(Color brickLinkColor) {
         this.brickLinkColor = brickLinkColor;
+    }
+
+    /**
+     * Gets the colour of the line shown when unlinking bricks.
+     *
+     * @return  the colour
+     */
+    @SuppressWarnings("unused") // API method.
+    public Color getBrickUnlinkingColor() {
+        return brickUnlinkingColor;
+    }
+
+    /**
+     * Sets the colour of the line shown when unlinking bricks.
+     *
+     * @param brickUnlinkingColor   the colour
+     */
+    @SuppressWarnings("unused") // API method.
+    public void setBrickUnlinkingColor(Color brickUnlinkingColor) {
+        this.brickUnlinkingColor = brickUnlinkingColor;
     }
 
     /**
@@ -633,11 +659,12 @@ public class Designer extends JComponent {
             }
         }
 
-        // Are we dragging a link around? If so, draw link to cursor.
-        if (state.getType() == DesignerStateType.BRICK_LINKING) {
+        // Are we dragging a linking/unlinking line around? If so, draw link to cursor.
+        if (state.getType() == DesignerStateType.BRICK_LINKING
+                || state.getType() == DesignerStateType.BRICK_UNLINKING) {
             final int x = selectedBrick.getBounds().x + (selectedBrick.getBounds().width / 2);
             final int y = selectedBrick.getBounds().y + (selectedBrick.getBounds().height / 2);
-            g.setColor(brickLinkColor);
+            g.setColor(state.getType() == DesignerStateType.BRICK_LINKING ? brickLinkColor : brickUnlinkingColor);
             g.drawLine(x, y, getMousePosition().x, getMousePosition().y);
         }
 

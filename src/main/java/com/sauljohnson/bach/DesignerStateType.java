@@ -20,5 +20,10 @@ public enum DesignerStateType {
     /**
      * Represents the designer state in which a brick is being linked to another.
      */
-    BRICK_LINKING
+    BRICK_LINKING,
+
+    /**
+     * Represents the designer state in which a brick is being unlinked from another.
+     */
+    BRICK_UNLINKING
 }

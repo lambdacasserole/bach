@@ -52,6 +52,10 @@ class BrickLinkingState extends BrickSelectedDesignerState {
                 }
             }
             designer.setSelectedBrick(brickClicked);
+        } else {
+
+            // Clear selection.
+            designer.clearSelection();
         }
 
         // Revert state to default (i.e. leave linking state).
