@@ -713,8 +713,8 @@ public class Designer extends JComponent {
 
             // Link tag on selected brick.
             g.setColor(linkingTagBackgroundColor);
-            linkingTagBounds = new Rectangle((int) brickBounds.getX() - linkingTagSize,
-                    (int) brickBounds.getY() - linkingTagSize, linkingTagSize, linkingTagSize);
+            linkingTagBounds = new Rectangle((int) brickBounds.getX() - linkingTagSize - 1,
+                    (int) brickBounds.getY() - linkingTagSize - 1, linkingTagSize, linkingTagSize);
             g.fillRect(linkingTagBounds.x, linkingTagBounds.y, linkingTagBounds.width, linkingTagBounds.height);
             g.setColor(linkingTagBorderColor);
             g.drawRect(linkingTagBounds.x, linkingTagBounds.y, linkingTagBounds.width, linkingTagBounds.height);
