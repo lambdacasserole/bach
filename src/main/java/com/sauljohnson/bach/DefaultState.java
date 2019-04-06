@@ -12,7 +12,7 @@ import java.awt.event.MouseEvent;
 public class DefaultState extends DesignerState {
 
     /**
-     * Initialises a new instance of  a state in which neither a linking or dragging operation is taking place in a
+     * Initialises a new instance of a state in which neither a linking or dragging operation is taking place in a
      * designer.
      *
      * @param designer  the designer this state relates to

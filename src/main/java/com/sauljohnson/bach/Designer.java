@@ -634,6 +634,27 @@ public class Designer extends JComponent {
     }
 
     /**
+     * Gets whether or not the designer is locked.
+     *
+     * @return  true if the designer is locked, otherwise false
+     */
+    @SuppressWarnings("unused") // API method.
+    public boolean isLocked() {
+        return state.getType() == DesignerStateType.LOCKED;
+    }
+
+    /**
+     * Sets whether or not the designer is locked.
+     *
+     * @param locked    true to lock the designer, false to unlock
+     */
+    @SuppressWarnings("unused") // API method.
+    public void setLocked(boolean locked) {
+        state = locked ? new LockedState(this) : new DefaultState(this);
+        repaint();
+    }
+
+    /**
      * Performs a repaint of this designer component.
      * 
      * @param g The graphics context we are going to paint to.
