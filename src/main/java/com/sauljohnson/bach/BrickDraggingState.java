@@ -37,6 +37,11 @@ class BrickDraggingState extends BrickSelectedDesignerState {
             newY = newY - (newY % designer.getGridSpacing());
         }
 
+        // Do not proceed if brick moved outside top-left bounds.
+        if (newX < 0 || newY < 0) {
+            return;
+        }
+
         // Move brick.
         getSelectedBrick().setX(newX);
         getSelectedBrick().setY(newY);
