@@ -722,7 +722,8 @@ public class Designer extends JComponent {
             // Dotted bounding box on selected brick.
             g.setColor(selectionBoundingBoxColor);
             g.setStroke(selectionBoundingBoxStroke);
-            g.draw(brickBounds);
+            g.drawRect((int) brickBounds.getX() - 1, (int) brickBounds.getY() - 1, (int) brickBounds.getWidth() + 1,
+                    (int) brickBounds.getHeight() + 1);
         }
     }
     
