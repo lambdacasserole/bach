@@ -38,13 +38,19 @@ class BrickDraggingState extends BrickSelectedDesignerState {
         }
 
         // Do not proceed if brick moved outside top-left bounds.
-        if (newX < 0 || newY < 0) {
+        if (newX < 0 && newY < 0) {
             return;
         }
 
+        // Move to new position.
+        if (newX >= 0) {
+            getSelectedBrick().setX(newX);
+        }
+        if (newY >= 0) {
+            getSelectedBrick().setY(newY);
+        }
+
         // Move brick.
-        getSelectedBrick().setX(newX);
-        getSelectedBrick().setY(newY);
         designer.repaint();
 
         // Raise events with observers.
