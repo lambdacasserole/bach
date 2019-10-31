@@ -75,8 +75,6 @@ public class QuickBachTest {
 ```
 
 ## Acknowledgements
-A big thank you to the team at the [University of Warsaw](https://mimuw.edu.pl/en) behind [HAHA](http://haha.mimuw.edu.pl/). This really is an awesome tool for teaching software verification! By name, they're:
-* [Tadeusz Sznuk](http://www.mimuw.edu.pl/~tsznuk/)
-* Jacek Chrząszcz
-* [Aleksy Schubert](http://www.mimuw.edu.pl/~alx/)
-* Jakub Zakrzewski
+Credit to my original co-creators of [Denobo](https://github.com/lambdacasserole/Denobo), [Alex Mullen](https://github.com/alexmullen) and [Lee Oliver](https://github.com/Lee34723) for their part in building the original software.
+
+The [Tango Icon Library](http://tango.freedesktop.org/Tango_Icon_Library) (used in the preview GIF) is an excellent free icon pack that I recommend checking out.
